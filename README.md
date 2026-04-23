@@ -332,7 +332,7 @@ VM_USER=<vm-username> ./scripts/hermes-workspace-lume.sh bootstrap
 ```
 
 ### Idempotency Notes
-- `create-vm`: Safe to run multiple times (won't recreate existing VM). The macOS IPSW image is downloaded only when creating a new VM. To update the base image, delete the VM and re-run `create-vm`.
+- `create-vm`: Safe to run multiple times (won't recreate existing VM). The macOS IPSW image is downloaded by Lume and cached locally. Subsequent VM creations will reuse the cached IPSW unless you delete the VM and create a new one with the same name. To force a fresh IPSW download, delete the existing VM first.
 - `bootstrap`: 
   - Safe to re-run (will `git pull` latest, re-install deps if needed)
   - Will overwrite `.env` and `~/run-hermes-workspace.sh` each time
