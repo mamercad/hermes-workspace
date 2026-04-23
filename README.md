@@ -363,26 +363,25 @@ VM_USER=<vm-username> ./scripts/hermes-workspace-lume.sh bootstrap
 | `WORKSPACE_DIR` | `~/hermes-workspace` | Where to clone workspace in VM |
 | `AGENT_API_URL` | `http://127.0.0.1:8642` | Hermes gateway URL (from agent VM) |
 
-### Two-VM Setup (Recommended)
+### Important: hermes-workspace vs hermes-agent
 
-For production use, run two separate VMs:
+**hermes-workspace** (this repository) is the **web-based desktop UI** that connects to a Hermes agent/gateway. It does NOT include or install the Hermes agent itself.
 
-1. **Agent VM** — hosts the Hermes gateway (`hermes gateway run`)
-2. **Workspace VM** — hosts hermes-workspace, connects to agent VM
+**hermes-agent** is the Python-based backend service that provides the AI capabilities, memory, skills, etc. It must be running separately for the workspace to connect to.
 
-This keeps the agent's Python runtime isolated from the workspace's Node.js runtime:
+When you bootstrap a VM with this script, you get:
+- Node.js + pnpm
+- This hermes-workspace repository cloned
+- Dependencies installed via `pnpm install`
+- A startup script to run `pnpm start`
 
-```bash
-# Agent VM (from hermes-cua-lume-agent.sh)
-AGENT_VM_NAME=hermes-agent ./scripts/hermes-cua-lume-agent.sh create-vm
-VM_USER=mark TARGET_VM=agent ./scripts/hermes-cua-lume-agent.sh bootstrap
-./scripts/hermes-cua-lume-agent.sh start
+To have a fully functional Hermes system, you need **both**:
+1. A running hermes-agent (gateway)
+2. A running hermes-workspace (this UI)
 
-# Workspace VM
-AGENT_API_URL=http://<agent-vm-ip>:8642 ./scripts/hermes-workspace-lume.sh create-vm
-VM_USER=mark ./scripts/hermes-workspace-lume.sh bootstrap
-./scripts/hermes-workspace-lume.sh start
-```
+See the "Two-VM Setup" and "All-in-One VM" sections above for how to achieve this.
+
+**Important:** The workspace VM does NOT install hermes-agent. It only installs hermes-workspace and configures it to connect to a Hermes gateway at `HERMES_API_URL`. You must have a running Hermes gateway (agent) for the workspace to connect to.
 
 ### Accessing the VM
 
